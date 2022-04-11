@@ -81,7 +81,7 @@ BUILD_LOCATION="${ROOT_PATH_DIR}/build_dca/release/${SERVICE_BUILD_ARCHIVE_PATH}
 
 echo 'Archive path is ${SERVICE_BUILD_ARCHIVE_PATH}'
 echo 'Build Location is ${BUILD_LOCATION}'
-echo 'DTR IMAGE LOCATION is ${DTR_IMAGE_LOCATION}
+echo 'DTR IMAGE LOCATION is ${DTR_IMAGE_LOCATION}'
 
 
 if [ -n "${SERVICE_NAME}" ]; then
@@ -118,3 +118,4 @@ if [ -n "${SERVICE_NAME}" ]; then
 
 
 	docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+ f1
