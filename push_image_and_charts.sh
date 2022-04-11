@@ -91,6 +91,7 @@ if [ -n "${SERVICE_NAME}" ]; then
 	
 	echo ${pwd}
 	echo "Buld number :"$SERVICE_BUILD_NUMBER
+	docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS}
 	if [ -n "$GIT_ID" -a -n "$JAR_FINAL_NAME" ]; then
 		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}-${GIT_ID:0:7}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME}-${GIT_ID:0:7} .\"; exit 1"
 	elif [ -n "$JAR_FINAL_NAME" ]; then
