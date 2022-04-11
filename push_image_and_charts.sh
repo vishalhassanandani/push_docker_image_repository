@@ -111,8 +111,8 @@ if [ -n "${SERVICE_NAME}" ]; then
 	docker version
 	if [ "$DTR_ONLY" != "true" ]; then
 		echo "MMMMMMMMMMMMMMMMMM"
-		docker login -u ${BMC_PRIVATE_DOCKERHUB_USER} -p  ${BMC_PRIVATE_DOCKERHUB_PASS} || eval "echo \"BUILD FAILED: Docker login failed \"; exit 1"
-		docker push bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker push failed \"; docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; exit 1"
+		#docker login -u ${BMC_PRIVATE_DOCKERHUB_USER} -p  ${BMC_PRIVATE_DOCKERHUB_PASS} || eval "echo \"BUILD FAILED: Docker login failed \"; exit 1"
+		#docker push bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker push failed \"; docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; exit 1"
 		# docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER
 	fi
 
