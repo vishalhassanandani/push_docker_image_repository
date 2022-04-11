@@ -91,11 +91,11 @@ if [ -n "${SERVICE_NAME}" ]; then
 
 	echo "Buld number :"$SERVICE_BUILD_NUMBER
 	if [ -n "$GIT_ID" -a -n "$JAR_FINAL_NAME" ]; then
-		docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}-${GIT_ID:0:7}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME}-${GIT_ID:0:7} .\"; exit 1"
+		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}-${GIT_ID:0:7}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME}-${GIT_ID:0:7} .\"; exit 1"
 	elif [ -n "$JAR_FINAL_NAME" ]; then
-		docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME} .\"; exit 1"
+		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME} .\"; exit 1"
 	else
-		docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER . || eval "echo \"BUILD FAILED: docker build failed : docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER .\"; exit 1"
+		sudo docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER . || eval "echo \"BUILD FAILED: docker build failed : docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER .\"; exit 1"
 	fi
 
 	echo "Current local registry stats (On build machine) :"
@@ -110,7 +110,7 @@ if [ -n "${SERVICE_NAME}" ]; then
 
 
 	####push to DTR ##############
-
+	docker logout
 	docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS} || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR login failed \"; exit 1"
 	docker tag vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker tag failed \"; exit 1"
 	docker push ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER; docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR push failed \"; exit 1"
