@@ -88,7 +88,8 @@ if [ -n "${SERVICE_NAME}" ]; then
 	cd ${BUILD_LOCATION}/${SERVICE_NAME} || eval "echo \"BUILD FAILED: ${BUILD_LOCATION}/${SERVICE_NAME} folder not found \"; exit 1"
 	echo "Docker version on the build machine."
 	docker version
-
+	
+	echo ${pwd}
 	echo "Buld number :"$SERVICE_BUILD_NUMBER
 	if [ -n "$GIT_ID" -a -n "$JAR_FINAL_NAME" ]; then
 		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}-${GIT_ID:0:7}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME}-${GIT_ID:0:7} .\"; exit 1"
