@@ -82,9 +82,10 @@ BUILD_LOCATION="${ROOT_PATH_DIR}/build_dca/release/${SERVICE_BUILD_ARCHIVE_PATH}
 echo 'Archive path is ${SERVICE_BUILD_ARCHIVE_PATH}'
 echo 'Build Location is ${BUILD_LOCATION}'
 echo 'DTR IMAGE LOCATION is ${DTR_IMAGE_LOCATION}'
-echo 'location ${BUILD_LOCATION}/${SERVICE_NAME}'
+echo ${BUILD_LOCATION}
 
-
+docker logout
+docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS}
 if [ -n "${SERVICE_NAME}" ]; then
 	cd ${BUILD_LOCATION}/${SERVICE_NAME} || eval "echo \"BUILD FAILED: ${BUILD_LOCATION}/${SERVICE_NAME} folder not found \"; exit 1"
 	echo "Docker version on the build machine."
@@ -92,13 +93,15 @@ if [ -n "${SERVICE_NAME}" ]; then
 	
 	echo ${BUILD_LOCATION}/${SERVICE_NAME}
 	echo "Buld number :"$SERVICE_BUILD_NUMBER
-	docker logout
-	docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS}
+	
 	if [ -n "$GIT_ID" -a -n "$JAR_FINAL_NAME" ]; then
+		echo "HHHHHHHHHHHHHHH"
 		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}-${GIT_ID:0:7}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME}-${GIT_ID:0:7} .\"; exit 1"
 	elif [ -n "$JAR_FINAL_NAME" ]; then
+		echo "KKKKKKKKKKKK"
 		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME} .\"; exit 1"
 	else
+		echo "VVVVVVVVVVVVVVVV"
 		sudo docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER . || eval "echo \"BUILD FAILED: docker build failed : docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER .\"; exit 1"
 	fi
 
@@ -107,6 +110,7 @@ if [ -n "${SERVICE_NAME}" ]; then
 	echo "Pushing image to private registry:"
 	docker version
 	if [ "$DTR_ONLY" != "true" ]; then
+		echo "MMMMMMMMMMMMMMMMMM"
 		docker login -u ${BMC_PRIVATE_DOCKERHUB_USER} -p  ${BMC_PRIVATE_DOCKERHUB_PASS} || eval "echo \"BUILD FAILED: Docker login failed \"; exit 1"
 		docker push bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker push failed \"; docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; exit 1"
 		# docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER
