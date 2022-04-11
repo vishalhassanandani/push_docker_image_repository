@@ -118,4 +118,4 @@ if [ -n "${SERVICE_NAME}" ]; then
 
 
 	docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
- f1
+ fi
