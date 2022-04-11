@@ -84,8 +84,8 @@ echo 'Build Location is ${BUILD_LOCATION}'
 echo 'DTR IMAGE LOCATION is ${DTR_IMAGE_LOCATION}'
 echo ${BUILD_LOCATION}
 
-docker logout
-docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS}
+sudo docker logout
+sudo docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS}
 if [ -n "${SERVICE_NAME}" ]; then
 	cd ${BUILD_LOCATION}/${SERVICE_NAME} || eval "echo \"BUILD FAILED: ${BUILD_LOCATION}/${SERVICE_NAME} folder not found \"; exit 1"
 	echo "Docker version on the build machine."
@@ -120,10 +120,10 @@ if [ -n "${SERVICE_NAME}" ]; then
 	####push to DTR ##############
 	#docker logout
 	#docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS} || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR login failed \"; exit 1"
-	docker tag vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker tag failed \"; exit 1"
-	docker push ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER; docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR push failed \"; exit 1"
-	docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker tag vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker tag failed \"; exit 1"
+	sudo docker push ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER; docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR push failed \"; exit 1"
+	sudo docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: docker rmi ${DTR_IMAGE_LOCATION}:${IMAGE_NAME}-$SERVICE_BUILD_NUMBER failed \"; exit 1"
 
 
-	docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
