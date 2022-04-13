@@ -111,9 +111,9 @@ if [ -n "${SERVICE_NAME}" ]; then
 	
 	####push to DTR ##############
 	#sudo docker logout
-	#sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR login failed \"; exit 1"
+	sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR login failed \"; exit 1"
 	#sudo docker tag $IMAGE_NAME vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker tag $IMAGE_NAME vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
 	sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
 
-	#sudo docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
