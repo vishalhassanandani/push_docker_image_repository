@@ -165,7 +165,7 @@ do
 			sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
 		done
 
-		logexe sudo cd devops/helm-chart/$EACH_SERVICE_FOLDER
+		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
 		logexe sudo $HELM dependency update
 		cd ..
 		logexe sudo $HELM template $EACH_SERVICE_FOLDER
@@ -181,7 +181,7 @@ if [ -d ${BUILD_LOCATION}/helmtest ]; then
 	sudo rm -rf ${BUILD_LOCATION}/helmtest
 fi
 logexe sudo mkdir -p ${BUILD_LOCATION}/helmtest
-logexe sudo cd ${BUILD_LOCATION}/helmtest
+logexe cd ${BUILD_LOCATION}/helmtest
 echo "
 ###########################################################################
 # Initiating GIT push
@@ -196,7 +196,7 @@ for EACH_SERVICE_FOLDER in $HELM_REPO_FOLDERS
 do
 	echo "pushing helm for $EACH_SERVICE_FOLDER"
 	IFS=$OLD_IFS
-	logexe sudo cd ${BUILD_LOCATION}
+	logexe cd ${BUILD_LOCATION}
 	if [ -f devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml ]
 	then
 		sudo $HELM package devops/helm-chart/$EACH_SERVICE_FOLDER/
@@ -207,7 +207,7 @@ do
 		fi
 		logexe sudo cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
 		logexe sudo cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
-		sudo cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
+		cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
 
 		sudo $HELM repo index .
 		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
