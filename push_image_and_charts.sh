@@ -151,11 +151,11 @@ do
 
 		REGISTRY_HOST=`echo "${DTR_IMAGE_LOCATION}" | cut -d"/" -f1`
 		ORG=`echo "${DTR_IMAGE_LOCATION}" | cut -d"/" -f2-`
-		sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
+		sudo sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
 			-e "s/__release_version__/$RELEASE_VERSION/g" \
 			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml
 		
-		sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
+		sudo sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
 			-e "s/__registryhost__/$REGISTRY_HOST/g" \
 			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
 			-e "s/__image_name__/$IMAGE_NAME/g" \
@@ -163,13 +163,13 @@ do
 
 		for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
 		do
-			sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
+			sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
 		done
 
-		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
-		logexe $HELM dependency update
+		sudo logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
+		sudo logexe $HELM dependency update
 		cd ..
-		logexe $HELM template $EACH_SERVICE_FOLDER
+		sudo logexe $HELM template $EACH_SERVICE_FOLDER
 		if [ $? -ne 0 ]
 		then
 			echo "BUILD FAILED: Invalid helm charts"
@@ -179,17 +179,17 @@ do
 done
 
 if [ -d ${BUILD_LOCATION}/helmtest ]; then
-	rm -rf ${BUILD_LOCATION}/helmtest
+	sudo rm -rf ${BUILD_LOCATION}/helmtest
 fi
-logexe mkdir -p ${BUILD_LOCATION}/helmtest
-logexe cd ${BUILD_LOCATION}/helmtest
+sudo logexe mkdir -p ${BUILD_LOCATION}/helmtest
+sudo logexe cd ${BUILD_LOCATION}/helmtest
 echo "
 ###########################################################################
 # Initiating GIT push
 ###########################################################################
 "
 
-logexe git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
+sudo logexe git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
 i_RETURN=0
 OLD_IFS=$IFS
 IFS=","
@@ -197,40 +197,40 @@ for EACH_SERVICE_FOLDER in $HELM_REPO_FOLDERS
 do
 	echo "pushing helm for $EACH_SERVICE_FOLDER"
 	IFS=$OLD_IFS
-	logexe cd ${BUILD_LOCATION}
+	sudo logexe cd ${BUILD_LOCATION}
 	if [ -f devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml ]
 	then
-		$HELM package devops/helm-chart/$EACH_SERVICE_FOLDER/
+		sudo $HELM package devops/helm-chart/$EACH_SERVICE_FOLDER/
 
 		APP_NAME=$(egrep "^name: .*"  devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml | sed -e "s/^name: \(.*\)/\1/" -e 's/^"//' -e 's/"$//')
 		if [ ! -d "${BUILD_LOCATION}/helmtest/${CHART_REPO}" ]; then
-			mkdir -p ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
+			sudo mkdir -p ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
 		fi
-		logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
-		logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
-		cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
+		sudo logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
+		sudo logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
+		sudo cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
 
-		$HELM repo index .
-		logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
-		logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
+		sudo $HELM repo index .
+		sudo logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
+		sudo logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
 		GIT_COMMIT="true"
 
 	fi
 done
 if [ "$GIT_COMMIT" = "true" ]
 then
-	logexe git commit -m "from $version"
-	logexe git pull -u origin master
-	logexe git push -u origin master
+	sudo logexe git commit -m "from $version"
+	sudo logexe git pull -u origin master
+	sudo logexe git push -u origin master
 	i_RETURN=$?
 	if [ $i_RETURN -ne 0 ]; then
-		logexe git pull -u origin master
-		logexe git push -u origin master
+		sudo logexe git pull -u origin master
+		sudo logexe git push -u origin master
 		i_RETURN=$?
 	fi
 fi
 
-rm -rf ${BUILD_LOCATION}/helmtest
+sudo rm -rf ${BUILD_LOCATION}/helmtest
 if [ $i_RETURN -ne 0 ]; then
 	exit $i_RETURN
 fi
