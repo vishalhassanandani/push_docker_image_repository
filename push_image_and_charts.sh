@@ -118,3 +118,119 @@ if [ -n "${SERVICE_NAME}" ]; then
 
 	sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
+ 
+ ##################################################################################################################################################################
+#								           HELM CHART
+##################################################################################################################################################################
+## Export helm var ####
+HELM=/usr/local/bin/helm
+
+SERVICE_BUILD_ARCHIVE_PATH="$app/$version"
+BUILD_LOCATION="${ROOT_PATH_DIR}/build_dca/release/${SERVICE_BUILD_ARCHIVE_PATH}/build.${SERVICE_BUILD_NUMBER}"
+
+if [ -z "$HELM_REPO_FOLDERS" ]
+then
+	HELM_REPO_FOLDERS=$SERVICE_NAME
+fi
+
+
+OLD_IFS=$IFS
+IFS=","
+for EACH_SERVICE_FOLDER in $HELM_REPO_FOLDERS
+do
+	echo "processing for $EACH_SERVICE_FOLDER"
+	cd ${BUILD_LOCATION} || eval "echo \"BUILD FAILED: ${BUILD_LOCATION} folder not found \"; exit 1"
+	IFS=$OLD_IFS
+	if [ -f "devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml" ]
+	then
+		echo "
+		###########################################################################
+		# Starting Helm Module
+		###########################################################################
+		"
+
+		REGISTRY_HOST=`echo "${DTR_IMAGE_LOCATION}" | cut -d"/" -f1`
+		ORG=`echo "${DTR_IMAGE_LOCATION}" | cut -d"/" -f2-`
+		sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
+			-e "s/__release_version__/$RELEASE_VERSION/g" \
+			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml
+		
+		sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
+			-e "s/__registryhost__/$REGISTRY_HOST/g" \
+			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
+			-e "s/__image_name__/$IMAGE_NAME/g" \
+			-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
+
+		for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
+		do
+			sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
+		done
+
+		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
+		logexe $HELM dependency update
+		cd ..
+		logexe $HELM template $EACH_SERVICE_FOLDER
+		if [ $? -ne 0 ]
+		then
+			echo "BUILD FAILED: Invalid helm charts"
+			exit 1
+		fi
+	fi
+done
+
+if [ -d ${BUILD_LOCATION}/helmtest ]; then
+	rm -rf ${BUILD_LOCATION}/helmtest
+fi
+logexe mkdir -p ${BUILD_LOCATION}/helmtest
+logexe cd ${BUILD_LOCATION}/helmtest
+echo "
+###########################################################################
+# Initiating GIT push
+###########################################################################
+"
+
+logexe git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
+i_RETURN=0
+OLD_IFS=$IFS
+IFS=","
+for EACH_SERVICE_FOLDER in $HELM_REPO_FOLDERS
+do
+	echo "pushing helm for $EACH_SERVICE_FOLDER"
+	IFS=$OLD_IFS
+	logexe cd ${BUILD_LOCATION}
+	if [ -f devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml ]
+	then
+		$HELM package devops/helm-chart/$EACH_SERVICE_FOLDER/
+
+		APP_NAME=$(egrep "^name: .*"  devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml | sed -e "s/^name: \(.*\)/\1/" -e 's/^"//' -e 's/"$//')
+		if [ ! -d "${BUILD_LOCATION}/helmtest/${CHART_REPO}" ]; then
+			mkdir -p ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
+		fi
+		logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
+		logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
+		cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
+
+		$HELM repo index .
+		logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
+		logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
+		GIT_COMMIT="true"
+
+	fi
+done
+if [ "$GIT_COMMIT" = "true" ]
+then
+	logexe git commit -m "from $version"
+	logexe git pull -u origin master
+	logexe git push -u origin master
+	i_RETURN=$?
+	if [ $i_RETURN -ne 0 ]; then
+		logexe git pull -u origin master
+		logexe git push -u origin master
+		i_RETURN=$?
+	fi
+fi
+
+rm -rf ${BUILD_LOCATION}/helmtest
+if [ $i_RETURN -ne 0 ]; then
+	exit $i_RETURN
+fi
