@@ -108,15 +108,7 @@ if [ -n "${SERVICE_NAME}" ]; then
 	echo "Current local registry stats (On build machine) :"
 	docker images
 	echo "Pushing image to private registry:"
-	docker version
-	if [ "$DTR_ONLY" != "true" ]; then
-		echo "MMMMMMMMMMMMMMMMMM"
-		#docker login -u ${BMC_PRIVATE_DOCKERHUB_USER} -p  ${BMC_PRIVATE_DOCKERHUB_PASS} || eval "echo \"BUILD FAILED: Docker login failed \"; exit 1"
-		#docker push vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker push failed \"; docker rmi bmcsoftware/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; exit 1"
-		# docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER
-	fi
-
-
+	
 	####push to DTR ##############
 	sudo docker logout
 	sudo docker login /index.docker.io/v1/ -u ${DTR_USER} -p  ${DTR_PASS} || eval "docker rmi vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER; echo \"BUILD FAILED: DTR login failed \"; exit 1"
