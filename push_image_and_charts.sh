@@ -126,7 +126,7 @@ if [ -n "${SERVICE_NAME}" ]; then
 HELM=/usr/local/bin/helm
 
 SERVICE_BUILD_ARCHIVE_PATH="$app/$version"
-BUILD_LOCATION="${ROOT_PATH_DIR}/build_dca/release/${SERVICE_BUILD_ARCHIVE_PATH}/build.${SERVICE_BUILD_NUMBER}"
+BUILD_LOCATION="${ROOT_PATH_DIR}/build_dca/release/${SERVICE_BUILD_ARCHIVE_PATH}/build.${SERVICE_BUILD_NUMBER}/${SERVICE_NAME}"
 
 if [ -z "$HELM_REPO_FOLDERS" ]
 then
