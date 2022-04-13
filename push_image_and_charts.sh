@@ -165,10 +165,10 @@ do
 			sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
 		done
 
-		sudo logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
-		sudo logexe $HELM dependency update
+		logexe sudo cd devops/helm-chart/$EACH_SERVICE_FOLDER
+		logexe sudo $HELM dependency update
 		cd ..
-		sudo logexe $HELM template $EACH_SERVICE_FOLDER
+		logexe sudo $HELM template $EACH_SERVICE_FOLDER
 		if [ $? -ne 0 ]
 		then
 			echo "BUILD FAILED: Invalid helm charts"
@@ -180,15 +180,15 @@ done
 if [ -d ${BUILD_LOCATION}/helmtest ]; then
 	sudo rm -rf ${BUILD_LOCATION}/helmtest
 fi
-sudo logexe mkdir -p ${BUILD_LOCATION}/helmtest
-sudo logexe cd ${BUILD_LOCATION}/helmtest
+logexe sudo mkdir -p ${BUILD_LOCATION}/helmtest
+logexe sudo cd ${BUILD_LOCATION}/helmtest
 echo "
 ###########################################################################
 # Initiating GIT push
 ###########################################################################
 "
 
-sudo logexe git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
+logexe sudo git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
 i_RETURN=0
 OLD_IFS=$IFS
 IFS=","
@@ -196,7 +196,7 @@ for EACH_SERVICE_FOLDER in $HELM_REPO_FOLDERS
 do
 	echo "pushing helm for $EACH_SERVICE_FOLDER"
 	IFS=$OLD_IFS
-	sudo logexe cd ${BUILD_LOCATION}
+	logexe sudo cd ${BUILD_LOCATION}
 	if [ -f devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml ]
 	then
 		sudo $HELM package devops/helm-chart/$EACH_SERVICE_FOLDER/
@@ -205,26 +205,26 @@ do
 		if [ ! -d "${BUILD_LOCATION}/helmtest/${CHART_REPO}" ]; then
 			sudo mkdir -p ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
 		fi
-		sudo logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
-		sudo logexe cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
+		logexe sudo cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
+		logexe sudo cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/devops/
 		sudo cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
 
 		sudo $HELM repo index .
-		sudo logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
-		sudo logexe git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
+		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
+		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
 		GIT_COMMIT="true"
 
 	fi
 done
 if [ "$GIT_COMMIT" = "true" ]
 then
-	sudo logexe git commit -m "from $version"
-	sudo logexe git pull -u origin master
-	sudo logexe git push -u origin master
+	logexe sudo git commit -m "from $version"
+	logexe sudo git pull -u origin master
+	logexe sudo git push -u origin master
 	i_RETURN=$?
 	if [ $i_RETURN -ne 0 ]; then
-		sudo logexe git pull -u origin master
-		sudo logexe git push -u origin master
+		logexe sudo git pull -u origin master
+		logexe sudo git push -u origin master
 		i_RETURN=$?
 	fi
 fi
