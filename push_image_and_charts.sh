@@ -223,12 +223,12 @@ done
 if [ "$GIT_COMMIT" = "true" ]
 then
 	logexe sudo git commit -m "from $version"
-	logexe sudo git pull -u origin master
-	logexe sudo git push -u origin master
+	logexe sudo git pull origin ${GIT_BRANCH}
+	logexe sudo git push origin ${GIT_BRANCH}
 	i_RETURN=$?
 	if [ $i_RETURN -ne 0 ]; then
-		logexe sudo git pull -u origin master
-		logexe sudo git push -u origin master
+		logexe sudo git pull origin ${GIT_BRANCH}
+		logexe sudo git push origin ${GIT_BRANCH}
 		i_RETURN=$?
 	fi
 fi
