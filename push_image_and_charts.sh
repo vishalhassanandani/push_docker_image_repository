@@ -99,23 +99,19 @@ if [ -n "${SERVICE_NAME}" ]; then
 	elif [ -n "$JAR_FINAL_NAME" ]; then
 		sudo docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME="${JAR_FINAL_NAME}" . || eval "echo \"BUILD FAILED: docker build failed: docker build -t bmcsoftware/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER --build-arg JAR_FINAL_NAME=${JAR_FINAL_NAME} .\"; exit 1"
 	else
-		echo "For testing purpose commented this line"
-		#sudo docker build -t ${DTR_IMAGE_LOCATION}/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER . || eval "echo \"BUILD FAILED: docker build failed : docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER .\"; exit 1"
+		sudo docker build -t ${DTR_IMAGE_LOCATION}/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER . || eval "echo \"BUILD FAILED: docker build failed : docker build -t vishal7/${IMAGE_NAME}:$SERVICE_BUILD_NUMBER .\"; exit 1"
 	fi
 
 	echo "Current local registry stats (On build machine) :"
-	echo "For testing purpose commented this line"
-	#docker images
+	docker images
 	echo "Pushing image to private registry:"
 	
 	####push to DTR ##############
-	echo "For testing purpose commented this line"
-	#sudo docker logout
-	#sleep 30
-	#sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "echo \"BUILD FAILED: DTR login failed \"; exit 1"
-	#sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
-
-	#sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker logout
+	sleep 30
+	sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "echo \"BUILD FAILED: DTR login failed \"; exit 1"
+	sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
  
  ##################################################################################################################################################################
