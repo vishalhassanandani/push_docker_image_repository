@@ -190,7 +190,7 @@ echo "
 a=$(pwd)
 echo "The current working dir is : $a"
 
-logexe sudo git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
+logexe sudo git clone git@github.com:vishalhassanandani/ADE-ade-helm-chart.git --depth 1
 i_RETURN=0
 OLD_IFS=$IFS
 IFS=","
@@ -213,7 +213,7 @@ do
 		cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
 
 		sudo $HELM repo index .
-		sudo git init
+		#sudo git init
 		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
 		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
 		GIT_COMMIT="true"
