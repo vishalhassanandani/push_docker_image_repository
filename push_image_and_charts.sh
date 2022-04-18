@@ -187,6 +187,8 @@ echo "
 # Initiating GIT push
 ###########################################################################
 "
+a=$(pwd)
+echo "The current working dir is : $a"
 
 logexe sudo git clone https://github.com/vishalhassanandani/ADE-ade-helm-chart.git --depth 1
 i_RETURN=0
@@ -203,6 +205,7 @@ do
 
 		APP_NAME=$(egrep "^name: .*"  devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml | sed -e "s/^name: \(.*\)/\1/" -e 's/^"//' -e 's/"$//')
 		if [ ! -d "${BUILD_LOCATION}/helmtest/${CHART_REPO}" ]; then
+			echo "creating helm chart repo"
 			sudo mkdir -p ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
 		fi
 		logexe sudo cp ${BUILD_LOCATION}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz  ${BUILD_LOCATION}/helmtest/${CHART_REPO}/
