@@ -229,7 +229,7 @@ then
 	fi
 fi
 
-#sudo rm -rf ${BUILD_LOCATION}/helmtest
+sudo rm -rf ${BUILD_LOCATION}/helmtest
 if [ $i_RETURN -ne 0 ]; then
 	exit $i_RETURN
 fi
