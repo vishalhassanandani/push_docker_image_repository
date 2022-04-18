@@ -180,7 +180,7 @@ done
 if [ -d ${BUILD_LOCATION}/helmtest ]; then
 	sudo rm -rf ${BUILD_LOCATION}/helmtest
 fi
-logexe sudo mkdir -p ${BUILD_LOCATION}/helmtest
+logexe sudo mkdir -p ${BUILD_LOCATION}/helmtest || exit 1
 logexe cd ${BUILD_LOCATION}/helmtest
 echo "
 ###########################################################################
@@ -213,6 +213,7 @@ do
 		cd ${BUILD_LOCATION}/helmtest/${CHART_REPO}/ || exit 1
 
 		sudo $HELM repo index .
+		sudo git init
 		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/${APP_NAME}-$SERVICE_BUILD_NUMBER.tgz
 		logexe sudo git add ${BUILD_LOCATION}/helmtest/${CHART_REPO}/index.yaml
 		GIT_COMMIT="true"
@@ -232,7 +233,7 @@ then
 	fi
 fi
 
-sudo rm -rf ${BUILD_LOCATION}/helmtest
+#sudo rm -rf ${BUILD_LOCATION}/helmtest
 if [ $i_RETURN -ne 0 ]; then
 	exit $i_RETURN
 fi
