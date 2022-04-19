@@ -115,7 +115,8 @@ if [ -n "${SERVICE_NAME}" ]; then
 	if [ $i_RETURN -ne 0 ]; then
 	      sudo docker logout
 	      sleep 30
-	      sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "echo \"BUILD FAILED: DTR login failed \"; exit 1"
+	      #sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io || eval "echo \"BUILD FAILED: DTR login failed \"; exit 1"
+	      sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io
 	      i_RETURN=$?
 	fi
 	sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
