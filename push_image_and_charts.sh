@@ -107,9 +107,9 @@ if [ -n "${SERVICE_NAME}" ]; then
 	echo "Pushing image to private registry:"
 	
 	####push to DTR ##############
-	#sudo docker logout
-	#sleep 30
-	#sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io
+	sudo docker logout
+	sleep 60
+	sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io
 	sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
 	sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
