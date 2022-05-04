@@ -107,11 +107,11 @@ if [ -n "${SERVICE_NAME}" ]; then
 	echo "Pushing image to private registry:"
 	
 	####push to DTR ##############
-	sudo docker logout
+	#sudo docker logout
 	#sleep 60
-	sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io
-	#sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
-	#sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	#sudo docker login -u ${DTR_USER} -p  ${DTR_PASS} docker.io
+	sudo docker push ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER ||  eval "echo \"BUILD FAILED: docker push  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
+	sudo docker rmi ${DTR_IMAGE_LOCATION}/$IMAGE_NAME:$SERVICE_BUILD_NUMBER || eval "echo \"BUILD FAILED: docker rmi  vishal7/$IMAGE_NAME:$SERVICE_BUILD_NUMBER failed \"; exit 1"
  fi
  
  ##################################################################################################################################################################
@@ -150,15 +150,16 @@ do
 			-e "s/__release_version__/$RELEASE_VERSION/g" \
 			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" devops/helm-chart/$EACH_SERVICE_FOLDER/Chart.yaml
 		
-		sudo sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
-			-e "s/__registryhost__/$REGISTRY_HOST/g" \
-			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
-			-e "s/__image_name__/$IMAGE_NAME/g" \
-			-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
+		
+		#sudo sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
+		#	-e "s/__registryhost__/$REGISTRY_HOST/g" \
+		#	-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
+		#	-e "s/__image_name__/$IMAGE_NAME/g" \
+		#	-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
 
 		for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
 		do
-			sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
+		#	sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
 		done
 
 		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
