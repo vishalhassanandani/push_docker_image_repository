@@ -157,11 +157,11 @@ do
 		#	-e "s/__image_name__/$IMAGE_NAME/g" \
 		#	-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
 
-		for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
-		do
-		    echo "$EACH_TEMPLATE"
+		#for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
+		#do
+		    #echo "$EACH_TEMPLATE"
 		    #sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
-		done
+		#done
 
 		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
 		logexe sudo $HELM dependency update
