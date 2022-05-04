@@ -159,7 +159,8 @@ do
 
 		for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
 		do
-		#	sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
+		    echo "$EACH_TEMPLATE"
+		    #sudo sed -i -e "s/__service_name__/$EACH_SERVICE_FOLDER/g" $EACH_TEMPLATE
 		done
 
 		logexe cd devops/helm-chart/$EACH_SERVICE_FOLDER
