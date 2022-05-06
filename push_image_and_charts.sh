@@ -153,9 +153,9 @@ do
 		
 		sudo sed -i -e "s/__chart_version__/$SERVICE_BUILD_NUMBER/g" \
 			-e "s/__registryhost__/$REGISTRY_HOST/g" \
-			-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
-			-e "s/__image_name__/$IMAGE_NAME/g" \
-			-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
+			#-e "s/__service_name__/$EACH_SERVICE_FOLDER/g" \
+			-e "s/__image_name__/$IMAGE_NAME/g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
+			#-e "s%__org__%$ORG%g" devops/helm-chart/$EACH_SERVICE_FOLDER/values.yaml
 
 		#for EACH_TEMPLATE in devops/helm-chart/$EACH_SERVICE_FOLDER/templates/*.yaml
 		#do
